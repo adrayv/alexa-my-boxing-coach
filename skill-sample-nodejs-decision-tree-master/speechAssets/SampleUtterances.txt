@@ -1,13 +1,39 @@
+AMAZON.YesIntent next
+AMAZON.YesIntent go
+AMAZON.YesIntent yes
+AMAZON.YesIntent yeah
+
+AMAZON.NoIntent no
+AMAZON.NoIntent nope
+
+AMAZON.StopIntent stop
+AMAZON.StopIntent let's stop
+AMAZON.StopIntent off
+AMAZON.StopIntent turn off
+AMAZON.StopIntent shut up
+AMAZON.StopIntent quit
+AMAZON.StopIntent let's quit
+AMAZON.StopIntent break
+AMAZON.StopIntent cease
+AMAZON.StopIntent done
+AMAZON.StopIntent i'm done
+AMAZON.StopIntent i am done
+AMAZON.StopIntent finished
+AMAZON.StopIntent i'm finished
+AMAZON.StopIntent I am finished
+AMAZON.StopIntent end
+AMAZON.StopIntent end it
+
+AMAZON.StartOverIntent start over
+AMAZON.StartOverIntent let's start over
+AMAZON.StartOverIntent restart
+AMAZON.StartOverIntent let's restart
+AMAZON.StartOverIntent start again
+AMAZON.StartOverIntent play again
+
 DescriptionIntent {Description} please
 DescriptionIntent please {Description}
 DescriptionIntent {Description}
 DescriptionIntent can you {Description}
 DescriptionIntent tell me about that
 DescriptionIntent description please
-AMAZON.StopIntent stop
-AMAZON.StopIntent off
-AMAZON.StopIntent shut up
-AMAZON.StartOverIntent start over
-AMAZON.StartOverIntent restart
-AMAZON.StartOverIntent start again
-AMAZON.StartOverIntent play again
