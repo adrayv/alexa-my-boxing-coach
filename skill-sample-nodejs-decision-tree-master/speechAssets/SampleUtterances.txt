@@ -1,10 +1,19 @@
-AMAZON.YesIntent next
-AMAZON.YesIntent go
-AMAZON.YesIntent yes
-AMAZON.YesIntent yeah
+AMAZON.RandomIntent go
+AMAZON.RandomIntent next
 
-AMAZON.NoIntent no
-AMAZON.NoIntent nope
+AMAZON.OneIntent one
+AMAZON.TwoIntent two
+AMAZON.ThreeIntent three
+AMAZON.FourIntent four
+
+AMAZON.RepeatIntent repeat
+AMAZON.RepeatIntent repeat that
+AMAZON.RepeatIntent repeat that one
+AMAZON.RepeatIntent again
+AMAZON.RepeatIntent do that again
+AMAZON.RepeatIntent do that one again
+AMAZON.RepeatIntent say that again
+AMAZON.RepeatIntent say that one again
 
 AMAZON.StopIntent stop
 AMAZON.StopIntent let's stop
@@ -30,10 +39,3 @@ AMAZON.StartOverIntent restart
 AMAZON.StartOverIntent let's restart
 AMAZON.StartOverIntent start again
 AMAZON.StartOverIntent play again
-
-DescriptionIntent {Description} please
-DescriptionIntent please {Description}
-DescriptionIntent {Description}
-DescriptionIntent can you {Description}
-DescriptionIntent tell me about that
-DescriptionIntent description please
