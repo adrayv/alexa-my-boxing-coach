@@ -1,0 +1,2 @@
+#!/bin/sh
+ffmpeg -y -i $1.mp3 -ar 16000 -ab 48k -codec:a libmp3lame -ac 1  $2.mp3

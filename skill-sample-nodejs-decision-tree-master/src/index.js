@@ -1,37 +1,80 @@
-/**
- * This sample demonstrates a simple skill built with the Amazon Alexa Skills Kit.
- * The Intent Schema, Custom Slots, and Sample Utterances for this skill, as well as
- * testing instructions are located at http://amzn.to/1LzFrj6
- *
- * For additional samples, visit the Alexa Skills Kit Getting Started guide at
- * http://amzn.to/1LGWsLG
- */
-
 var Alexa = require('alexa-sdk');
 
 var states = {
     STARTMODE: '_STARTMODE',                // Prompt the user to start or restart the game.
-    ASKMODE: '_ASKMODE',                    // Alexa is asking user the questions.
-    //DESCRIPTIONMODE: '_DESCRIPTIONMODE'     // Alexa is describing the final choice and prompting to start again or quit
+    ASKMODE: '_ASKMODE',                    // Alexa is asking user for response after punches.
 };
 
-
 // Punch Combinations
-var nodes = [
+var onePunches = [
+	"jab",
+	"cross",
+	"left hook",
+	"right hook",
+	"left uppercut",
+	"right uppercut",
+	"overhand"
+];
+
+var twoPunches = [
+	"double jab",
+	"double cross",
 	"jab cross",
+	"cross jab",
+	"left hook right hook",
+	"right hook left hook",
+	"cross hook",
+	"hook cross",
+	"cross uppercut",
+	"jab uppercut",
+	"jab left hook",
+	"jab right hook",
+	"jab overhand"
+];
+
+var threePunches = [
+	"triple jab",
 	"jab jab cross",
+	"jab cross jab",
 	"jab cross hook",
-	"jab cross hook cross",
-	"jab cross uppercut cross",
-	"jab uppercut hook cross",
+	"jab uppercut hook",
+	"jab cross uppercut",
 	"cross hook cross",
-	"hook cross hook"
+	"hook cross hook",
+	"hook cross uppercut",
+	"jab hook cross",
+	"uppercut hook cross",
+	"cross cross hook"
+];
+
+var fourPunches = [
+	"jab right hook left hook cross",
+	"jab right hook left hook uppercut",
+	"jab hook uppercut cross",
+	"jab uppercut jab cross",
+	"jab uppercut jab hook",
+	"jab uppercut hook cross",
+	"jab uppercut left hook right hook",
+	"jab uppercut hook uppercut",
+	"jab cross hook cross",
+	"jab cross left hook right hook",
+	"jab cross hook uppercut",
+	"jab cross uppercut cross",
+	"jab cross left uppercut right uppercut",
+	"jab hook jab cross",
+	"jab hook jab uppercut",
+	"jab cross jab cross",
+	"jab cross jab uppercut",
+	"jab cross hook overhand",
+	"jab overhand hook cross",
+	"jab overhand hook overhand"
 ];
 
 // These are messages that Alexa says to the user during conversation
 
 // This is the intial welcome message
-var welcomeMessage = "Hello, I am your boxing coach. After each punch combination, say yes to continue, or say no to stop. Are you ready to begin?";
+//var welcomeMessage = "Hi, I'm your boxing coach. After completing each combination, say a number between 1 and 4, to get another combo. You could also say, Next, to get something random, or say, Repeat, to repeat the last combo. When you're done, just say, Stop. Please say a number to begin.";
+var welcomeMessage = "Here is the Audio. <audio src=\"https://s3.amazonaws.com/adrayv-bucket/alexa-boxing/boxing-bell.mp3\"/>";
 
 // This is the message that is repeated if the response to the initial welcome message is not heard
 var repeatWelcomeMessage = "Say yes for a punch combination, or say no to quit.";
@@ -166,46 +209,6 @@ var askQuestionHandlers = Alexa.CreateStateHandler(states.ASKMODE, {
         this.emit(':ask', promptToSayYesNo, reprompt + promptToSayYesNo);
     }
 });
-
-/*
-// user has heard the final choice and has been asked if they want to hear the description or to play again
-var descriptionHandlers = Alexa.CreateStateHandler(states.DESCRIPTIONMODE, {
-
- 'AMAZON.YesIntent': function () {
-        // Handle Yes intent.
-        // reset the game state to start mode
-        this.handler.state = states.STARTMODE;
-        this.emit(':ask', welcomeMessage, repeatWelcomeMessage);
-    },
-    'AMAZON.NoIntent': function () {
-        // Handle No intent.
-        this.emit(':tell', goodbyeMessage);
-    },
-    'AMAZON.HelpIntent': function () {
-        this.emit(':ask', promptToSayYesNo, promptToSayYesNo);
-    },
-    'AMAZON.StopIntent': function () {
-        this.emit(':tell', goodbyeMessage);
-    },
-    'AMAZON.CancelIntent': function () {
-        this.emit(':tell', goodbyeMessage);
-    },
-    'AMAZON.StartOverIntent': function () {
-        // reset the game state to start mode
-        this.handler.state = states.STARTMODE;
-        this.emit(':ask', welcomeMessage, repeatWelcomeMessage);
-    },
-    'DescriptionIntent': function () {
-        //var reply = this.event.request.intent.slots.Description.value;
-        //console.log('HEARD: ' + reply);
-        helper.giveDescription(this);
-      },
-
-    'Unhandled': function () {
-        this.emit(':ask', promptToSayYesNo, promptToSayYesNo);
-    }
-});
-*/
 
 // --------------- Helper Functions  -----------------------
 
