@@ -1,24 +1,20 @@
-AMAZON.RandomIntent go
-AMAZON.RandomIntent next
+GoIntent go
 
-AMAZON.OneIntent one
-AMAZON.TwoIntent two
-AMAZON.ThreeIntent three
-AMAZON.FourIntent four
+RepeatIntent repeat
+RepeatIntent repeat that
+RepeatIntent repeat that one
+RepeatIntent repeat that last one
+RepeatIntent again
+RepeatIntent do that again
+RepeatIntent do that last one
+RepeatIntent do that one again
+RepeatIntent say that again
+RepeatIntent say that one again
+RepeatIntent say that last one
 
-AMAZON.RepeatIntent repeat
-AMAZON.RepeatIntent repeat that
-AMAZON.RepeatIntent repeat that one
-AMAZON.RepeatIntent again
-AMAZON.RepeatIntent do that again
-AMAZON.RepeatIntent do that one again
-AMAZON.RepeatIntent say that again
-AMAZON.RepeatIntent say that one again
-
-AMAZON.StopIntent no
-AMAZON.StopIntent nope
 AMAZON.StopIntent stop
 AMAZON.StopIntent let's stop
+AMAZON.StopIntent let's stop it
 AMAZON.StopIntent off
 AMAZON.StopIntent turn off
 AMAZON.StopIntent shut up
@@ -34,6 +30,7 @@ AMAZON.StopIntent i'm finished
 AMAZON.StopIntent I am finished
 AMAZON.StopIntent end
 AMAZON.StopIntent end it
+AMAZON.StopIntent let's end it
 
 AMAZON.StartOverIntent start over
 AMAZON.StartOverIntent let's start over

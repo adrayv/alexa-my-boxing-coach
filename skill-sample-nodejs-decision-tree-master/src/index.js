@@ -2,7 +2,7 @@ var Alexa = require('alexa-sdk');
 
 var states = {
     STARTMODE: '_STARTMODE',                // Prompt the user to start or restart the game.
-    ASKMODE: '_ASKMODE',                    // Alexa is asking user for response after punches.
+	WORKOUTMODE: '_WORKOUTMODE'
 };
 
 // Punch Combinations
@@ -70,52 +70,27 @@ var fourPunches = [
 	"jab overhand hook overhand"
 ];
 
-// These are messages that Alexa says to the user during conversation
 
-// This is the intial welcome message
-//var welcomeMessage = "Hi, I'm your boxing coach. After completing each combination, say a number between 1 and 4, to get another combo. You could also say, Next, to get something random, or say, Repeat, to repeat the last combo. When you're done, just say, Stop. Please say a number to begin.";
-var welcomeMessage = "Here is the Audio. <audio src=\"https://s3.amazonaws.com/adrayv-bucket/alexa-boxing/boxing-bell.mp3\"/>";
+// ---------------- Messages ----------------------
 
-// This is the message that is repeated if the response to the initial welcome message is not heard
-var repeatWelcomeMessage = "Say yes for a punch combination, or say no to quit.";
+var welcomeMessage = "Hi, I'm your Boxing Coach. For a great experince, It's best if you already have some knowledge of boxing, and that you have some open space near you before you start training. Would you like to continue?";
 
-// this is the message that is repeated if Alexa does not hear/understand the reponse to the welcome message
-var promptToStartMessage = "Say yes, and I will give you a punch combination. Say no to quit.";
+var shortWelcome = "Would you like to continue?";
 
-// This is the prompt during the game when Alexa doesnt hear or understand a yes / no reply
-var promptToSayYesNo = "Please say yes for a punch combination, or say no to quit.";
+var sessionDescription = "In this session, we will be doing a couple minutes of warm-ups, a minute of shadow boxing, and then we'll work on our punches. For your safety, please train in an open space. Are you ready to begin?";
 
-// this is the help message during the setup at the beginning of the game
-var helpMessage = "I will call out punch combinations. After I say a combination, say yes to continue or say no to quit. Are you ready?";
+var helpMessage = "We will train through a series of boxing exercies. For your safety, please train in an open-space environment. ";
 
-// message to handle unrecognized or timed out utterances
-var repromptPunch = "Sorry, I didn't get that. Let's try again. ";
-
-// general message for reprompting the user
 var reprompt = "Sorry, I didn't get that. ";
 
-// This is the goodbye message when the user has asked to quit the game
-var goodbyeMessage = "Ok, see you next time!";
+var goodbyeMessage = "Ok, See you next time!";
 
-var speechNotFoundMessage = "Could not find speech for node";
+var beginWorkout = "Ok, Here we go, ";
 
-var nodeNotFoundMessage = "In nodes array could not find node";
 
-var descriptionNotFoundMessage = "Could not find description for node";
+// ---------------- Sounds ----------------------
 
-var loopsDetectedMessage = "A repeated path was detected on the node tree, please fix before continuing";
-
-// ----------------------- Not needed ----------------------
-
-var utteranceTellMeMore = "tell me more";
-
-var utterancePlayAgain = "play again";
-//
-// This is the response to the user after the final question when Alex decides on what group choice the user should be given
-var decisionMessage = "I think you would make a good";
-
-// This is the prompt to ask the user if they would like to hear a short description of thier chosen profession or to play again
-var playAgainMessage = "Say 'tell me more' to hear a short description for this profession, or do you want to play again?";
+var countDown = "<audio src='https://s3.amazonaws.com/adrayv-bucket/alexa-boxing/boxing-bell.mp3'/> ";
 
 
 // --------------- Handlers -----------------------
@@ -123,7 +98,7 @@ var playAgainMessage = "Say 'tell me more' to hear a short description for this 
 // Called when the session starts.
 exports.handler = function (event, context, callback) {
     var alexa = Alexa.handler(event, context);
-    alexa.registerHandlers(newSessionHandler, startGameHandlers, askQuestionHandlers);
+    alexa.registerHandlers(newSessionHandler, startGameHandlers, workoutHandler);
     alexa.execute();
 };
 
@@ -131,33 +106,26 @@ exports.handler = function (event, context, callback) {
 var newSessionHandler = {
   'LaunchRequest': function () { 
     this.handler.state = states.STARTMODE;
-    this.emit(':ask', welcomeMessage, reprompt + repeatWelcomeMessage);
-  },'AMAZON.HelpIntent': function () { // if a user does not know how to work it
+    this.emit(':ask', welcomeMessage, reprompt + shortWelcome);
+  },
+  'AMAZON.HelpIntent': function () { // if a user does not know how to work it
     this.handler.state = states.STARTMODE;
-    this.emit(':ask', helpMessage, reprompt + helpMessage);
+    this.emit(':ask', helpMessage + shortWelcome, reprompt + helpMessage + shortWelcome);
   },
   'Unhandled': function () { // if a user does not say the right thing
-    this.handler.state = states.STARTMODE;
-    this.emit(':ask', promptToStartMessage, reprompt + promptToStartMessage);
+    this.emit(':ask', reprompt + shortWelcome, reprompt + shortWelcome); // CHECK FOR TYPO
   }
 };
 
 // --------------- Functions that control the skill's behavior -----------------------
 
-// Called at the start of the game, picks and asks first question for the user
+// state before the workouts begin
 var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
     'AMAZON.YesIntent': function () {
-        // set state to asking questions
-        this.handler.state = states.ASKMODE;
-
-        // ask first question, the response will be handled in the askQuestionHandler
-        var message = helper.getSpeech();
-
-        // ask the first question
-        this.emit(':ask', message, repromptPunch + message);
+    	this.handler.state = states.WORKOUTMODE;
+    	this.emit(':ask', sessionDescription); // ask the session descirption, answered in WORKOUT mode
     },
     'AMAZON.NoIntent': function () {
-        // Handle No intent.
         this.emit(':tell', goodbyeMessage);
     },
     'AMAZON.StopIntent': function () {
@@ -167,17 +135,48 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
         this.emit(':tell', goodbyeMessage);
     },
     'AMAZON.StartOverIntent': function () {
-         this.emit(':ask', promptToStartMessage, reprompt + promptToStartMessage);
+        this.handler.state = states.STARTMODE;
+        this.emit(':ask', welcomeMessage, reprompt + shortWelcome);
     },
     'AMAZON.HelpIntent': function () {
-        this.emit(':ask', helpMessage, reprompt + helpMessage);
+        this.handler.state = states.STARTMODE;
+		this.emit(':ask', helpMessage + shortWelcome, reprompt + helpMessage + shortWelcome);
     },
     'Unhandled': function () {
-        this.emit(':ask', promptToStartMessage, reprompt + promptToStartMessage);
+		this.handler.state = states.STARTMODE;
+		this.emit(':ask', reprompt + shortWelcome);
+    }
+});
+
+var workoutHandler = Alexa.CreateStateHandler(states.WORKOUTMODE, {
+	'AMAZON.YesIntent': function () {
+		this.emit(':tell', beginWorkout + countDown);
+	},
+    'AMAZON.NoIntent': function () {
+        this.emit(':tell', goodbyeMessage);
+    },
+    'AMAZON.StopIntent': function () {
+        this.emit(':tell', goodbyeMessage);
+    },
+    'AMAZON.CancelIntent': function () {
+        this.emit(':tell', goodbyeMessage);
+    },
+    'AMAZON.StartOverIntent': function () {
+        this.handler.state = states.STARTMODE;
+        this.emit(':ask', welcomeMessage, reprompt + shortWelcome);
+    },
+    'AMAZON.HelpIntent': function () {
+        this.handler.state = states.STARTMODE;
+		this.emit(':ask', helpMessage + shortWelcome, reprompt + helpMessage + shortWelcome);
+    },
+    'Unhandled': function () {
+		this.handler.state = states.STARTMODE;
+		this.emit(':ask', reprompt + shortWelcome);
     }
 });
 
 
+/*
 // user will have been asked a question when this intent is called. We want to look at their yes/no
 // response and then ask another question. If we have asked more than the requested number of questions Alexa will
 // make a choice, inform the user and then ask if they want to play again
@@ -219,3 +218,4 @@ var helper = {
         return nodes[nodeIndex];
     }
 };
+*/
