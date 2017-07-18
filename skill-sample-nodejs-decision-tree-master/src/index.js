@@ -2,7 +2,7 @@ var Alexa = require('alexa-sdk');
 
 var states = {
     STARTMODE: '_STARTMODE',                // Prompt the user to start or restart the game.
-	WORKOUTMODE: '_WORKOUTMODE'
+	PREWARMUP: '_PREWARMUP'
 };
 
 // Punch Combinations
@@ -77,7 +77,7 @@ var welcomeMessage = "Hi, I'm your Boxing Coach. For a great experince, It's bes
 
 var shortWelcome = "Would you like to continue?";
 
-var sessionDescription = "In this session, we will be doing a couple minutes of warm-ups, a minute of shadow boxing, and then we'll work on our punches. For your safety, please train in an open space. Are you ready to begin?";
+var sessionDescription = "In this session, we will do some warm-ups, practice our footwork, work on our defense, and refine our punches. For your safety, please train in an open space. Are you ready to begin?";
 
 var helpMessage = "We will train through a series of boxing exercies. For your safety, please train in an open-space environment. ";
 
@@ -85,20 +85,41 @@ var reprompt = "Sorry, I didn't get that. ";
 
 var goodbyeMessage = "Ok, See you next time!";
 
-var beginWorkout = "Ok, Here we go, ";
+var beginWorkout = "Ok, Get ready. At the sound of the bell, we will begin. ";
 
+// ---------------- Variables ----------------------
+
+var warmupTime = "30 ";
 
 // ---------------- Sounds ----------------------
 
-var countDown = "<audio src='https://s3.amazonaws.com/adrayv-bucket/alexa-boxing/boxing-bell.mp3'/> ";
+var bell = "<audio src='https://s3.amazonaws.com/adrayv-bucket/alexa-boxing/boxing-bell.mp3'/> ";
+var break3 = "<break time='3s'/> ";
+var break5 = "<break time='5s'/> ";
 
+// ---------------- Transition Messages ----------------------
+
+var transitions = {
+	first: "First, ",
+	next: "<emphasis level='strong'>Great Job!</emphasis>. " + break3 + "Next, ",
+	lastly: "Lastly, "
+};
+
+// ---------------- Modules ----------------------
+
+var warmups = [
+	"Let's do Jumping Jacks for " + warmupTime + "seconds. " + bell,
+	"Let's do High Knees for " + warmupTime + "seconds. " + bell,
+	"Let's do Torso Twists for " + warmupTime + "seconds. " + bell,
+	"Let's do Squats for " + warmupTime + "seconds. " + bell
+];
 
 // --------------- Handlers -----------------------
 
 // Called when the session starts.
 exports.handler = function (event, context, callback) {
     var alexa = Alexa.handler(event, context);
-    alexa.registerHandlers(newSessionHandler, startGameHandlers, workoutHandler);
+    alexa.registerHandlers(newSessionHandler, startGameHandlers, preWarmupHandler);
     alexa.execute();
 };
 
@@ -122,7 +143,7 @@ var newSessionHandler = {
 // state before the workouts begin
 var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
     'AMAZON.YesIntent': function () {
-    	this.handler.state = states.WORKOUTMODE;
+    	this.handler.state = states.PREWARMUP;
     	this.emit(':ask', sessionDescription); // ask the session descirption, answered in WORKOUT mode
     },
     'AMAZON.NoIntent': function () {
@@ -148,9 +169,10 @@ var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
     }
 });
 
-var workoutHandler = Alexa.CreateStateHandler(states.WORKOUTMODE, {
+var preWarmupHandler = Alexa.CreateStateHandler(states.PREWARMUP, {
 	'AMAZON.YesIntent': function () {
-		this.emit(':tell', beginWorkout + countDown);
+		var warmupRoutine = buildWarmup(warmups);
+		this.emit(':tell', beginWorkout + warmupRoutine);
 	},
     'AMAZON.NoIntent': function () {
         this.emit(':tell', goodbyeMessage);
@@ -184,7 +206,7 @@ var askQuestionHandlers = Alexa.CreateStateHandler(states.ASKMODE, {
 
     'AMAZON.YesIntent': function () {
         this.handler.state = states.ASKMODE;
-        var message = helper.getSpeech();
+        var message = getSpeech();
         this.emit(':ask', message, repromptPunch + message);
     },
     'AMAZON.NoIntent': function () {
@@ -208,14 +230,35 @@ var askQuestionHandlers = Alexa.CreateStateHandler(states.ASKMODE, {
         this.emit(':ask', promptToSayYesNo, reprompt + promptToSayYesNo);
     }
 });
+*/
 
 // --------------- Helper Functions  -----------------------
 
-var helper = {
-    // returns the speech for the provided node id
-    getSpeech: function () {
-        var nodeIndex = Math.floor(Math.random() * nodes.length);
-        return nodes[nodeIndex];
+function getSpeech() {
+    var nodeIndex = Math.floor(Math.random() * nodes.length);
+    return nodes[nodeIndex];
+}
+
+function buildWarmup(unshuffled) {
+    warmups = shuffle(unshuffled);
+    var str = transitions['first'] + warmups[0] + break5; // set up the first warmup
+    for(i = 1; i < warmups.length - 1; ++i) { // iterate through all but the last warmup
+		str += transitions['next'];
+		str += warmups[i];
+		str += break5; // FIX: chage this to a longer time
     }
-};
-*/
+    str += transitions['lastly'];
+    str += warmups[warmups.length - 1];
+    return str;
+}
+
+function shuffle(a) {
+    var j, x, i;
+    for (i = a.length; i; i--) {
+		j = Math.floor(Math.random() * i);
+    	x = a[i - 1];
+    	a[i - 1] = a[j];
+    	a[j] = x;
+	}
+	return a;
+}
