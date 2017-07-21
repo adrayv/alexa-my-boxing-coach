@@ -1,218 +1,210 @@
-/**
- * This sample demonstrates a simple skill built with the Amazon Alexa Skills Kit.
- * The Intent Schema, Custom Slots, and Sample Utterances for this skill, as well as
- * testing instructions are located at http://amzn.to/1LzFrj6
- *
- * For additional samples, visit the Alexa Skills Kit Getting Started guide at
- * http://amzn.to/1LGWsLG
- */
-
 var Alexa = require('alexa-sdk');
 
 var states = {
     STARTMODE: '_STARTMODE',                // Prompt the user to start or restart the game.
-    ASKMODE: '_ASKMODE',                    // Alexa is asking user the questions.
-    //DESCRIPTIONMODE: '_DESCRIPTIONMODE'     // Alexa is describing the final choice and prompting to start again or quit
+    STAGEMODE: '_STAGEMODE'
 };
 
 
-// Punch Combinations
-var nodes = [
-	"jab cross",
-	"jab jab cross",
-	"jab cross hook",
-	"jab cross hook cross",
-	"jab cross uppercut cross",
-	"jab uppercut hook cross",
-	"cross hook cross",
-	"hook cross hook"
-];
+// ---------------- Messages ----------------------
 
-// These are messages that Alexa says to the user during conversation
+var welcomeMsg = "Hi, I'm your Boxing Coach. ";
 
-// This is the intial welcome message
-var welcomeMessage = "Hello, I am your boxing coach. After each punch combination, say yes to continue, or say no to stop. Are you ready to begin?";
+var usageMsg = "We are going to practice our boxing skills through several rounds of punching combination drills. ";
 
-// This is the message that is repeated if the response to the initial welcome message is not heard
-var repeatWelcomeMessage = "Say yes for a punch combination, or say no to quit.";
+var disclosureMsg = "These workouts are meant for users who already have some boxing experience to supplement the work they do at a real gym. For the best experience, use boxing gloves and a heavybag, or work mitts with a partner. ";
 
-// this is the message that is repeated if Alexa does not hear/understand the reponse to the welcome message
-var promptToStartMessage = "Say yes, and I will give you a punch combination. Say no to quit.";
+var promptNumRounds = "How many rounds of boxing would you like to do? ";
 
-// This is the prompt during the game when Alexa doesnt hear or understand a yes / no reply
-var promptToSayYesNo = "Please say yes for a punch combination, or say no to quit.";
+var workoutDesc1 = "Ok. We will do ";
 
-// this is the help message during the setup at the beginning of the game
-var helpMessage = "I will call out punch combinations. After I say a combination, say yes to continue or say no to quit. Are you ready?";
+var workoutDesc3 = "Each round will last for three minutes. You can use my commands to shadowbox, work on a heavybag, or work mitts with a partner. ";
 
-// message to handle unrecognized or timed out utterances
-var repromptPunch = "Sorry, I didn't get that. Let's try again. ";
+var continueMsg = "Would you like to continue? ";
 
-// general message for reprompting the user
+var readyMsg = "Are you ready to begin? ";
+
+//var helpMsg = "We will train through a series of boxing exercies. For your safety, please train in an open-space environment. ";
+
+// ---------------- Help Messages ----------------------
+
+var getHelp = "If you need help using this skill, whenever I ask you a question just say, I need help. ";
+
+var numRoundsHelp = "A typical round of boxing is three minutes. ";
+
+var numRoundsUsage = "Please say a number between one and twelve, and we will do that many number of rounds. ";
+
+var goodbyeMsg = "Ok, see you next time!";
+
+// ---------------- Variables ----------------------
+
+var numRounds = 0;
+var allowedRoundsLower = 1;
+var allowedRoundsUpper = 12;
+
+// ---------------- Sounds ----------------------
+
+var bell = "<audio src='https://s3.amazonaws.com/adrayv-bucket/alexa-boxing/boxing-bell.mp3'/> ";
+var breakQuick = "<break time='700ms'/> ";
+var break1 = "<break time='1s'/> ";
+var break3 = "<break time='3s'/> ";
+var break5 = "<break time='5s'/> ";
+var break30 = "<break time='10s'/> <break time='10s'/> <break time='10s'/> ";
+
+// ---------------- Transition Messages ----------------------
+
+var excitement = "Great! ";
+
+var praise = "<emphasis level='strong'>Well Done!</emphasis>. ";
+
 var reprompt = "Sorry, I didn't get that. ";
 
-// This is the goodbye message when the user has asked to quit the game
-var goodbyeMessage = "Ok, see you next time!";
+var beginExercise = "Ok, Get ready. At the sound of the bell, we will begin. ";
 
-var speechNotFoundMessage = "Could not find speech for node";
+var catchBreath = "Take a moment to catch your breath. ";
 
-var nodeNotFoundMessage = "In nodes array could not find node";
-
-var descriptionNotFoundMessage = "Could not find description for node";
-
-var loopsDetectedMessage = "A repeated path was detected on the node tree, please fix before continuing";
-
-// ----------------------- Not needed ----------------------
-
-var utteranceTellMeMore = "tell me more";
-
-var utterancePlayAgain = "play again";
-//
-// This is the response to the user after the final question when Alex decides on what group choice the user should be given
-var decisionMessage = "I think you would make a good";
-
-// This is the prompt to ask the user if they would like to hear a short description of thier chosen profession or to play again
-var playAgainMessage = "Say 'tell me more' to hear a short description for this profession, or do you want to play again?";
-
+// ---------------- Modules ----------------------
 
 // --------------- Handlers -----------------------
+
+// FIX: please fix all help and unhandled handlers. as of right now, they restore user back to start mode
 
 // Called when the session starts.
 exports.handler = function (event, context, callback) {
     var alexa = Alexa.handler(event, context);
-    alexa.registerHandlers(newSessionHandler, startGameHandlers, askQuestionHandlers);
+    alexa.registerHandlers(newSessionHandler, startModeHandler, stagingHandler);
     alexa.execute();
 };
 
-// set state to start up and  welcome the user
+// set state to start up and welcome the user
 var newSessionHandler = {
-  'LaunchRequest': function () { 
-    this.handler.state = states.STARTMODE;
-    this.emit(':ask', welcomeMessage, reprompt + repeatWelcomeMessage);
-  },'AMAZON.HelpIntent': function () { // if a user does not know how to work it
-    this.handler.state = states.STARTMODE;
-    this.emit(':ask', helpMessage, reprompt + helpMessage);
-  },
-  'Unhandled': function () { // if a user does not say the right thing
-    this.handler.state = states.STARTMODE;
-    this.emit(':ask', promptToStartMessage, reprompt + promptToStartMessage);
-  }
+	'LaunchRequest': function () { 
+		var question = welcomeMsg + usageMsg + disclosureMsg + continueMsg;
+		var repeat = reprompt + getHelp + usageMsg + continueMsg;
+		this.handler.state = states.STARTMODE;
+		this.emit(':ask', question, repeat);
+	},
+    'AMAZON.StopIntent': function () {
+        this.emit(':tell', goodbyeMsg);
+    },
+    'AMAZON.CancelIntent': function () {
+        this.emit(':tell', goodbyeMsg);
+    },
+	'AMAZON.HelpIntent': function () { // if a user does not know how to work it
+		var question = usageMsg + continueMsg
+		var repeat = reprompt + question;
+		this.emit(':ask', question, repeat);
+	}
+	/*
+    'AMAZON.StartOverIntent': function () {
+		var greeting = welcomeMsg + usageMsg + disclosureMsg + continueMsg;
+		var repeat = reprompt + usageMsg + continueMsg;
+		this.emit(':ask', greeting, repeat);
+    }
+	'Unhandled': function () { // if a user puts an unrecognized statement
+		this.emit(':ask', reprompt + usageMsg + continueMsg); 
+	}
+	*/
 };
 
-// --------------- Functions that control the skill's behavior -----------------------
-
-// Called at the start of the game, picks and asks first question for the user
-var startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
-    'AMAZON.YesIntent': function () {
-        // set state to asking questions
-        this.handler.state = states.ASKMODE;
-
-        // ask first question, the response will be handled in the askQuestionHandler
-        var message = helper.getSpeech();
-
-        // ask the first question
-        this.emit(':ask', message, repromptPunch + message);
-    },
-    'AMAZON.NoIntent': function () {
-        // Handle No intent.
-        this.emit(':tell', goodbyeMessage);
-    },
+var startModeHandler = Alexa.CreateStateHandler(states.STARTMODE, { // responses for after the welcome message
+	'AMAZON.YesIntent': function() {
+		var question = excitement + promptNumRounds;
+		var repeat = reprompt + getHelp + promptNumRounds;
+		this.handler.state = states.STAGEMODE;
+		this.emit(':ask', question, repeat);
+	},
+	'AMAZON.NoIntent': function() {
+		this.emit(':tell', goodbyeMsg);
+	},
     'AMAZON.StopIntent': function () {
-        this.emit(':tell', goodbyeMessage);
+        this.emit(':tell', goodbyeMsg);
     },
     'AMAZON.CancelIntent': function () {
-        this.emit(':tell', goodbyeMessage);
+        this.emit(':tell', goodbyeMsg);
     },
     'AMAZON.StartOverIntent': function () {
-         this.emit(':ask', promptToStartMessage, reprompt + promptToStartMessage);
+		var question = welcomeMsg + usageMsg + disclosureMsg + continueMsg;
+		var repeat = reprompt + getHelp + usageMsg + continueMsg;
+		this.emit(':ask', question, repeat);
     },
-    'AMAZON.HelpIntent': function () {
-        this.emit(':ask', helpMessage, reprompt + helpMessage);
-    },
-    'Unhandled': function () {
-        this.emit(':ask', promptToStartMessage, reprompt + promptToStartMessage);
-    }
+	'AMAZON.HelpIntent': function () { // if a user does not know how to work it from the welcomeMessage
+		var question = usageMsg + continueMsg
+		var repeat = reprompt + question;
+		this.emit(':ask', question, repeat);
+	},
+	'Unhandled': function () { // handles unrecognized phrases from welomeMessage 
+		var question = reprompt + getHelp + continueMsg;
+		this.emit(':ask', question); 
+	}
 });
 
-
-// user will have been asked a question when this intent is called. We want to look at their yes/no
-// response and then ask another question. If we have asked more than the requested number of questions Alexa will
-// make a choice, inform the user and then ask if they want to play again
-var askQuestionHandlers = Alexa.CreateStateHandler(states.ASKMODE, {
-
-    'AMAZON.YesIntent': function () {
-        this.handler.state = states.ASKMODE;
-        var message = helper.getSpeech();
-        this.emit(':ask', message, repromptPunch + message);
-    },
-    'AMAZON.NoIntent': function () {
-        this.emit(':tell', goodbyeMessage);
-    },
-    'AMAZON.HelpIntent': function () {
-        this.emit(':ask', promptToSayYesNo, reprompt + promptToSayYesNo);
-    },
+var stagingHandler = Alexa.CreateStateHandler(states.STAGEMODE, { // responses for after the welcome message
+	'numRoundsIntent': function() {
+		var question = undefined;
+		var repeat = undefined;
+		var slotVal = undefined;
+		slotVal = this.event.request.intent.slots.NUMROUNDS.value;
+		if(slotVal) {
+			numRounds = slotVal;
+			if(numRounds < allowedRoundsLower || numRounds > allowedRoundsUpper) {
+				question = numRoundsUsage + promptNumRounds;
+				repeat = reprompt + question;
+				this.emit(':ask', question, repeat);
+			}
+			var question = getWorkoutDesc(numRounds);
+			var repeat = reprompt + readyMsg;
+			this.emit(':tell', question, repeat);
+			//this.handler.state = states.
+		}
+		else { // called if a user does not give a numRoundsIntent.
+			var question = reprompt + getHelp + numRoundsUsage + promptNumRounds;
+			this.emit(':ask', question);
+		}
+	},
     'AMAZON.StopIntent': function () {
-        this.emit(':tell', goodbyeMessage);
+        this.emit(':tell', goodbyeMsg);
     },
     'AMAZON.CancelIntent': function () {
-        this.emit(':tell', goodbyeMessage);
+        this.emit(':tell', goodbyeMsg);
     },
     'AMAZON.StartOverIntent': function () {
-        // reset the game state to start mode
-        this.handler.state = states.STARTMODE;
-        this.emit(':ask', welcomeMessage, reprompt + repeatWelcomeMessage);
+		var question = welcomeMsg + usageMsg + disclosureMsg + continueMsg;
+		var repeat = reprompt + getHelp + usageMsg + continueMsg;
+		this.handler.state = states.STARTMODE;
+		this.emit(':ask', question, repeat);
     },
-    'Unhandled': function () {
-        this.emit(':ask', promptToSayYesNo, reprompt + promptToSayYesNo);
-    }
+	'AMAZON.HelpIntent': function () {
+		var question = usageMsg + numRoundsHelp + numRoundsUsage + promptNumRounds;
+		var repeat =  reprompt + promptNumRounds;
+		this.emit(':ask', question, repeat);
+	},
+	'Unhandled': function () { // This is not called when getting an Unhandled utterance in this state
+		var question = reprompt + getHelp + numRoundsUsage + promptNumRounds;
+		this.emit(':ask', question);
+	}
 });
-
-/*
-// user has heard the final choice and has been asked if they want to hear the description or to play again
-var descriptionHandlers = Alexa.CreateStateHandler(states.DESCRIPTIONMODE, {
-
- 'AMAZON.YesIntent': function () {
-        // Handle Yes intent.
-        // reset the game state to start mode
-        this.handler.state = states.STARTMODE;
-        this.emit(':ask', welcomeMessage, repeatWelcomeMessage);
-    },
-    'AMAZON.NoIntent': function () {
-        // Handle No intent.
-        this.emit(':tell', goodbyeMessage);
-    },
-    'AMAZON.HelpIntent': function () {
-        this.emit(':ask', promptToSayYesNo, promptToSayYesNo);
-    },
-    'AMAZON.StopIntent': function () {
-        this.emit(':tell', goodbyeMessage);
-    },
-    'AMAZON.CancelIntent': function () {
-        this.emit(':tell', goodbyeMessage);
-    },
-    'AMAZON.StartOverIntent': function () {
-        // reset the game state to start mode
-        this.handler.state = states.STARTMODE;
-        this.emit(':ask', welcomeMessage, repeatWelcomeMessage);
-    },
-    'DescriptionIntent': function () {
-        //var reply = this.event.request.intent.slots.Description.value;
-        //console.log('HEARD: ' + reply);
-        helper.giveDescription(this);
-      },
-
-    'Unhandled': function () {
-        this.emit(':ask', promptToSayYesNo, promptToSayYesNo);
-    }
-});
-*/
 
 // --------------- Helper Functions  -----------------------
 
-var helper = {
-    // returns the speech for the provided node id
-    getSpeech: function () {
-        var nodeIndex = Math.floor(Math.random() * nodes.length);
-        return nodes[nodeIndex];
-    }
-};
+function shuffle(a) {
+    var j, x, i;
+    for (i = a.length; i; i--) {
+		j = Math.floor(Math.random() * i);
+    	x = a[i - 1];
+    	a[i - 1] = a[j];
+    	a[j] = x;
+	}
+	return a;
+}
+
+function getWorkoutDesc(num) {
+	var workoutDesc2 = undefined;
+	if(num == 1) {
+		workoutDesc2 = " round. ";
+	}
+	else {
+		workoutDesc2 = " rounds. ";
+	}
+	return workoutDesc1 + num.toString() + workoutDesc2 + workoutDesc3 + readyMsg;
+}

@@ -1,39 +1,63 @@
-AMAZON.YesIntent next
-AMAZON.YesIntent go
-AMAZON.YesIntent yes
-AMAZON.YesIntent yeah
+numRoundsIntent {NUMROUNDS} rounds
+numRoundsIntent I want to do {NUMROUNDS} rounds
+numRoundsIntent I want {NUMROUNDS} rounds
+numRoundsIntent I want to try {NUMROUNDS} rounds
+numRoundsIntent I think I want {NUMROUNDS} rounds
+numRoundsIntent I think I want to do {NUMROUNDS} rounds
+numRoundsIntent I think I want to try {NUMROUNDS} rounds
+numRoundsIntent Let's do {NUMROUNDS} rounds
+numRoundsIntent Let's try {NUMROUNDS} rounds
+numRoundsIntent I'm going to do {NUMROUNDS} rounds
+numRoundsIntent We're going to do {NUMROUNDS} rounds
+numRoundsIntent give me {NUMROUNDS} rounds
+numRoundsIntent please give me {NUMROUNDS} rounds
+numRoundsIntent I would like to do {NUMROUNDS} rounds
+numRoundsIntent I would like {NUMROUNDS} rounds
 
-AMAZON.NoIntent no
-AMAZON.NoIntent nope
+numRoundsIntent {NUMROUNDS}
+numRoundsIntent I want to do {NUMROUNDS}
+numRoundsIntent I want {NUMROUNDS}
+numRoundsIntent I want to try {NUMROUNDS} 
+numRoundsIntent I think I want {NUMROUNDS} 
+numRoundsIntent I think I want to do {NUMROUNDS} 
+numRoundsIntent I think I want to try {NUMROUNDS} 
+numRoundsIntent Let's do {NUMROUNDS} 
+numRoundsIntent Let's try {NUMROUNDS} 
+numRoundsIntent I'm going to do {NUMROUNDS} 
+numRoundsIntent We're going to do {NUMROUNDS} 
+numRoundsIntent give me {NUMROUNDS} 
+numRoundsIntent please give me {NUMROUNDS} 
+numRoundsIntent I would like to do {NUMROUNDS} 
+numRoundsIntent I would like {NUMROUNDS}
 
-AMAZON.StopIntent stop
-AMAZON.StopIntent let's stop
-AMAZON.StopIntent off
-AMAZON.StopIntent turn off
-AMAZON.StopIntent shut up
-AMAZON.StopIntent quit
-AMAZON.StopIntent let's quit
-AMAZON.StopIntent break
-AMAZON.StopIntent cease
-AMAZON.StopIntent done
-AMAZON.StopIntent i'm done
-AMAZON.StopIntent i am done
-AMAZON.StopIntent finished
-AMAZON.StopIntent i'm finished
-AMAZON.StopIntent I am finished
-AMAZON.StopIntent end
-AMAZON.StopIntent end it
+numRoundsIntent {NUMROUNDS} boxing rounds
+numRoundsIntent I want to do {NUMROUNDS} boxing rounds
+numRoundsIntent I want {NUMROUNDS} boxing rounds
+numRoundsIntent I want to try {NUMROUNDS} boxing rounds
+numRoundsIntent I think I want {NUMROUNDS} boxing rounds
+numRoundsIntent I think I want to do {NUMROUNDS} boxing rounds
+numRoundsIntent I think I want to try {NUMROUNDS} boxing rounds
+numRoundsIntent Let's do {NUMROUNDS} boxing rounds
+numRoundsIntent Let's try {NUMROUNDS} boxing rounds
+numRoundsIntent I'm going to do {NUMROUNDS} boxing rounds
+numRoundsIntent We're going to do {NUMROUNDS} boxing rounds
+numRoundsIntent give me {NUMROUNDS} boxing rounds
+numRoundsIntent please give me {NUMROUNDS} boxing rounds
+numRoundsIntent I would like to do {NUMROUNDS} boxing rounds
+numRoundsIntent I would like {NUMROUNDS} boxing rounds
 
-AMAZON.StartOverIntent start over
-AMAZON.StartOverIntent let's start over
-AMAZON.StartOverIntent restart
-AMAZON.StartOverIntent let's restart
-AMAZON.StartOverIntent start again
-AMAZON.StartOverIntent play again
-
-DescriptionIntent {Description} please
-DescriptionIntent please {Description}
-DescriptionIntent {Description}
-DescriptionIntent can you {Description}
-DescriptionIntent tell me about that
-DescriptionIntent description please
+numRoundsIntent {NUMROUNDS} rounds of boxing
+numRoundsIntent I want to do {NUMROUNDS} rounds of boxing
+numRoundsIntent I want {NUMROUNDS} rounds of boxing
+numRoundsIntent I want to try {NUMROUNDS} rounds of boxing
+numRoundsIntent I think I want {NUMROUNDS} rounds of boxing
+numRoundsIntent I think I want to do {NUMROUNDS} rounds of boxing
+numRoundsIntent I think I want to try {NUMROUNDS} rounds of boxing
+numRoundsIntent Let's do {NUMROUNDS} rounds of boxing
+numRoundsIntent Let's try {NUMROUNDS} rounds of boxing
+numRoundsIntent I'm going to do {NUMROUNDS} rounds of boxing
+numRoundsIntent We're going to do {NUMROUNDS} rounds of boxing
+numRoundsIntent give me {NUMROUNDS} rounds of boxing
+numRoundsIntent please give me {NUMROUNDS} rounds of boxing
+numRoundsIntent I would like to do {NUMROUNDS} rounds of boxing
+numRoundsIntent I would like {NUMROUNDS} rounds of boxing
