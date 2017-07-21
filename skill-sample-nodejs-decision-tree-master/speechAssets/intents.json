@@ -6,12 +6,14 @@
 		"intent": "AMAZON.NoIntent",
 		"slots": []
     }, {
-    	"intent": "GoIntent",
-    	"slots": []
+    	"intent": "numRoundsIntent",
+    	"slots": [
+			{
+				"name": "NUMROUNDS",
+				"type": "AMAZON.NUMBER"
+			}
+    	]
     }, {
-		"intent": "RepeatIntent",
-		"slots": []
-	}, {
 		"intent": "AMAZON.HelpIntent",
 		"slots": []
 	}, {
