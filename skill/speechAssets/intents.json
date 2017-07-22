@@ -1,0 +1,29 @@
+{
+	"intents": [{
+		"intent": "AMAZON.YesIntent",
+		"slots": []
+    }, {
+		"intent": "AMAZON.NoIntent",
+		"slots": []
+    }, {
+    	"intent": "numRoundsIntent",
+    	"slots": [
+			{
+				"name": "NUMROUNDS",
+				"type": "AMAZON.NUMBER"
+			}
+    	]
+    }, {
+		"intent": "AMAZON.HelpIntent",
+		"slots": []
+	}, {
+		"intent": "AMAZON.StopIntent",
+		"slots": []
+	}, {
+		"intent": "AMAZON.CancelIntent",
+		"slots": []
+	}, {
+		"intent": "AMAZON.StartOverIntent",
+		"slots": []
+	}]
+}
