@@ -1,3 +1,4 @@
+# About this Skill
 This skill brings a boxing coach to your home! My Boxing Coach enhances your real-life boxing workout with drill-based punching exercises. 
 
 These exercises were crafted under the consultation of real-life boxing coaches and are just like the ones you would see in a typical boxing class.
@@ -14,3 +15,6 @@ AN INVIGORATING WORKOUT
 You can work out up to 12 rounds in one session! So whether you're a Pro looking to boost your endurance or you're just looking to get a great workout at home, My Boxing Coach will be your go-to routine to a stronger lifestyle!
 
 So get your heavy bag or even work mitts with a partner! A great home boxing experience is just a few words away.
+
+# Try it out
+On your Amazon Echo device, or on the [Alexa Simulator](https://echosim.io/), say *"Alexa, open My Boxing Coach"*. You can also define number of rounds on launch by saying something like, *"Alexa, ask my boxing coach for eleven rounds of boxing"* or *"Alexa, tell me boxing coach to give me five rounds"*. [Skill Page](http://alexa.amazon.com/spa/index.html#skills/dp/B0745B95TV/?ref=skill_dsk_skb_sr_0)
